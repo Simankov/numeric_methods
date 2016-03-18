@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.HashMap;
+
 public class Integration {
     public static Double a = 1.5;
     public static Double b = 2.3;
@@ -7,6 +9,7 @@ public class Integration {
     public static Double realValue = 25.0102;
     public static Double realValueWithP = 32.2195;
     public Double[] difference = new Double[5];
+    public HashMap<String, Double> SH_i = new HashMap<String, Double>();
 
     public static Double f(Double arg){
         return 2*Math.cos(3.5*arg)*Math.exp(5*arg/3)+3*Math.sin(1.5*arg)*Math.exp(-4*arg)+3;
@@ -192,7 +195,100 @@ public class Integration {
         return result;
     }
 
+    public double AitkenProcess(double eps){
+        double q = 2.0;
+        double i = 0;
+        double i_1 = 0;
+        double m_i_1 = 0;
+        double m_i = 0;
+        double i_2 = 0;
+        do {
+            i = i_1;
+            i_1 = i+1;
+            i_2 = i_1+1;
+            m_i = m_i_1;
+            m_i_1 = Math.log ( Math.abs ( (  S(i,q) - S(i_1,q) ) / (S(i_1,q) - S(i_2,q)) ) ) / Math.log(q);
+        } while (Math.abs(m_i_1 - m_i)>=eps);
+        return m_i_1;
+ }
 
 
+ public double S(Double pow,Double q){
+     String key = pow.toString() + " " + q.toString();
+     if (SH_i.containsKey(key)){
+         return SH_i.get(key);
+     }
+     double i = Math.pow(q,pow);
+     double H = (b-a)/i;
+     double a_k = a;
+    double b_k = a;
+    double sum = 0;
+    for (int j = 0; j<i; j++) {
+        a_k = b_k;
+        b_k += H;
+        sum+=f((a_k+b_k)/2.0)*H;
+    }
+     SH_i.put(key,sum);
+    return sum;
+ }
+
+
+  public double RungeMethod(double eps1,double eps2){
+      double i=-1;
+      double R = 0;
+      double q=2;
+      double result = 0;
+      double m = AitkenProcess(eps2);
+      do {
+          double i_1 = i+1;
+          double i_2 = i+2;
+          double SH_1 = S(i_1,q);
+          double SH_2 = S(i_2,q);
+          double Hi_1_m = Math.pow((b-a)/Math.pow(q,i_1),m);
+          double Hi_2_m = Math.pow((b-a)/Math.pow(q,i_2),m);
+          double Y = (SH_1/Hi_1_m - SH_2/Math.pow((i_2*q),m)) / (1/Hi_1_m - 1/Hi_2_m);
+          double Cm = ( SH_2 - SH_1 ) /  ( Hi_1_m - Hi_2_m );
+          R = Cm * Hi_2_m;
+          result = SH_2;
+          if (Math.abs(R)<eps1) {
+              System.out.println("Runge:"+i_2);
+          }
+          i++;
+      }
+      while (Math.abs(R)>=eps1);
+      return result;
+  }
+
+    public double RichardsonMethod(int r,double eps1,double eps2){
+        double q = 2;
+        double m = AitkenProcess(eps2);
+        double Hi[] = new double[r];
+        for (int j=0; j<r; j++){
+            Hi[j] = (b-a)/Math.pow(q,j);
+        }
+        double [][] Q = new double[r][r];
+        double[] b = new double[r];
+        for (int i= 0; i<r; i++){
+            for (int j=0;j<r; j++){
+                Q[i][j] = (j==0)?1:- Math.pow(Hi[i],m+j);
+            }
+            b[i]=S((double)i,q);
+        }
+        double[] x = Matrix.eliminateWithGauss(Q,b);
+        double R = 0;
+        for (int i = 1; i<r; i++){
+            R+=x[i]*Math.pow(Hi[r-1],m+i);
+        }
+        if (Math.abs(R)<eps1){
+            System.out.println("Richardson:"+(r-1));
+            return S((double)r-1,q);
+        } else {
+            return RichardsonMethod(r+1,eps1,eps2);
+        }
+    }
+
+    public double RichardsonMethod(double eps1,double eps2){
+        return RichardsonMethod(2,eps1,eps2);
+    }
 
 }
