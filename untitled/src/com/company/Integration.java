@@ -1,5 +1,6 @@
 package com.company;
 
+
 import java.util.HashMap;
 
 public class Integration {
@@ -35,7 +36,7 @@ public class Integration {
         return (b-a)/6.0*(f(a)+4*f((a+b)/2.0)+f(b));
     }
 
-    public double riemannIntegral(Double n){
+    public Double riemannIntegral(Double n){
         Double sum = 0.0;
         Double x_k = aa;
         Double x_k_1 = aa;
@@ -48,11 +49,11 @@ public class Integration {
         return sum;
     }
 
-    public double NewtonKotes(){
+    public Double NewtonKotes(){
         return NewtonKotes(1,aa,bb);
     }
 
-    public double smartIntegration(Double n){
+    public Double smartIntegration(Double n){
         for (int type = 0; type<=4; type++) {
             Double a_k = aa;
             Double b_k = aa;
@@ -83,10 +84,10 @@ public class Integration {
 
 
 
-    public double NewtonKotes(int n,double a,double b) {
-            double a_k = a;
-            double b_k = a;
-            double sum = 0;
+    public Double NewtonKotes(int n,Double a,Double b) {
+            Double a_k = a;
+            Double b_k = a;
+            Double sum = 0.0;
             for (int i = 0; i < n; i++) {
                 a_k = b_k;
                 b_k += (b - a) / n;
@@ -95,57 +96,57 @@ public class Integration {
         return sum;
     }
 
-    public double NewtonKotes(double a_k, double b_k){
-        double x1 = a_k;
-        double x2 = (a_k+b_k)/2;
-        double x3 = b_k;
-        double [][] A = new double[][] {{1,1,1},{x1,x2,x3},{x1*x1,x2*x2,x3*x3}};
-        double [] b = new double[] {nu(a_k,b_k,0),nu(a_k,b_k,1),nu(a_k,b_k,2)};
-        double [] Ai = Matrix.eliminateWithGauss(A,b);
-        double sum = 0;
+    public Double NewtonKotes(Double a_k, Double b_k){
+        Double x1 = a_k;
+        Double x2 = (a_k+b_k)/2;
+        Double x3 = b_k;
+        Double [][] A = new Double[][] {{1.0,1.0,1.0},{x1,x2,x3},{x1*x1,x2*x2,x3*x3}};
+        Double [] b = new Double[] {nu(a_k,b_k,0),nu(a_k,b_k,1),nu(a_k,b_k,2)};
+        Double [] Ai = Matrix.eliminateWithGauss(A,b);
+        Double sum = 0.0;
         sum += f(x1)*Ai[0] +f(x2)*Ai[1] + f(x3)*Ai[2] ;
         return sum;
     }
 
-    public double[] solveEquation(double a, double b, double c, double d){
-        double q = (2*b*b*b / (27*a*a*a) - b*c / (3*a*a) + d / a ) ;
-        double p = (3*a*c - b*b)/(3*a*a);
-        double D = q*q/4 + p*p*p/9;
+    public Double[] solveEquation(Double a, Double b, Double c, Double d){
+        Double q = (2*b*b*b / (27*a*a*a) - b*c / (3*a*a) + d / a ) ;
+        Double p = (3*a*c - b*b)/(3*a*a);
+        Double D = q*q/4 + p*p*p/9;
         assert (D>0);
         assert (p<0);
-        double r = q>0 ? Math.sqrt(Math.abs(p)) : -Math.sqrt(Math.abs(p));
-        double arg = q / (r*r*r);
-        double phi = Math.acos(arg);
-        double y1 = -2*r*Math.cos(phi/3.0);
-        double y2 = 2*r*Math.cos(3.1415926/3.0 - phi/3.0);
-        double y3 = 2*r*Math.cos(3.1415926/3.0 + phi/3.0);
+        Double r = q>0 ? Math.sqrt(Math.abs(p)) : -Math.sqrt(Math.abs(p));
+        Double arg = q / (r*r*r);
+        Double phi = Math.acos(arg);
+        Double y1 = -2*r*Math.cos(phi/3.0);
+        Double y2 = 2*r*Math.cos(3.1415926/3.0 - phi/3.0);
+        Double y3 = 2*r*Math.cos(3.1415926/3.0 + phi/3.0);
 
-       return new double[] {y1 - b/(3*a),y2 - b/(3*a),y3 - b/(3*a)};
+       return new Double[] {y1 - b/(3*a),y2 - b/(3*a),y3 - b/(3*a)};
     }
 
-    public double Gauss(int n,int nsplit, double a,double b){
+    public Double Gauss(int n,int nsplit, Double a,Double b){
 
-        double sum = 0;
-        double a_k = a;
-        double b_k = a;
+        Double sum = 0.0;
+        Double a_k = a;
+        Double b_k = a;
         for (int k=0; k<nsplit; k++) {
             a_k = b_k;
             b_k += (b - a) / nsplit;
-            double[][] Q = new double[n][n];
-            double[] b1 = new double[n];
+            Double[][] Q = new Double[n][n];
+            Double[] b1 = new Double[n];
             for (int i = 0; i < n; i++) {
-                b1[i] = (-1) * nu(aa,bb, n + i);
+                b1[i] = (-1) * nu(a,b, n + i);
                 for (int j = 0; j < n; j++) {
-                    Q[i][j] = nu(aa,bb, i + (n - 1 - j));
+                    Q[i][j] = nu(a,b, i + (n - 1 - j));
                 }
             }
 
-            double[] ai = Matrix.eliminateWithGauss(Q, b1);
-            double[] xi = solveEquation(1, ai[0], ai[1], ai[2]);
-            double[][] A = new double[][]{{1, 1, 1}, {xi[0], xi[1], xi[2]}, {xi[0] * xi[0], xi[1] * xi[1], xi[2] * xi[2]}};
-            double[] bb = new double[]{nu(aa,this.bb,0), nu(aa,this.bb,1), nu(aa,this.bb,2)};
-            double[] Ai = Matrix.eliminateWithGauss(A, bb);
-            double result = 0;
+            Double[] ai = Matrix.eliminateWithGauss(Q, b1);
+            Double[] xi = solveEquation(1.0, ai[0], ai[1], ai[2]);
+            Double[][] A = new Double[][]{{1.0, 1.0, 1.0}, {xi[0], xi[1], xi[2]}, {xi[0] * xi[0], xi[1] * xi[1], xi[2] * xi[2]}};
+            Double[] bb = new Double[]{nu(a,b,0), nu(a,b,1), nu(a,b,2)};
+            Double[] Ai = Matrix.eliminateWithGauss(A, bb);
+            Double result = 0.0;
             for (int i = 0; i < n; i++) {
                 result += Ai[i] * f(xi[i]);
             }
@@ -153,12 +154,12 @@ public class Integration {
         }
         return sum;
     }
-    public double nu(double a_k,double b_k,int i){
+    public Double nu(Double a_k,Double b_k,int i){
         return nu(i,b_k) - nu(i,a_k);
     }
 
 
-    public double nu(int i,double arg){
+    public Double nu(int i,Double arg){
 
         switch(i){
             case 0: return Math.pow(arg - aa,1-alpha) / (1-alpha);
@@ -180,16 +181,16 @@ public class Integration {
                         -(Math.pow(alpha,5)-15*Math.pow(alpha,4)+85*Math.pow(alpha,3)-225*Math.pow(alpha,2)+274*alpha-120)*Math.pow(arg,5))
                 / ((alpha - 6)*(alpha - 5)*(alpha-4)*(alpha - 3)*(alpha - 2)*(alpha - 1));
         }
-        return 0;
+        return 0.0;
     }
 
-    public double AitkenProcess(double eps){
-        double q = 2.0;
-        double i = 0;
-        double i_1 = 0;
-        double m_i_1 = 0;
-        double m_i = 0;
-        double i_2 = 0;
+    public Double AitkenProcess(Double eps){
+        Double q = 2.0;
+        Double i = 0.0;
+        Double i_1 = 0.0;
+        Double m_i_1 = 0.0;
+        Double m_i = 0.0;
+        Double i_2 = 0.0;
         do {
             i = i_1;
             i_1 = i+1;
@@ -201,42 +202,41 @@ public class Integration {
  }
 
 
- public double S(Double pow,Double q){
+ public Double S(Double pow,Double q){
      String key = pow.toString() + " " + q.toString();
      if (SH_i.containsKey(key)){
          return SH_i.get(key);
      }
-     double i = Math.pow(q,pow);
-     double H = (bb-aa)/i;
-     double a_k = aa;
-    double b_k = aa;
-    double sum = 0;
+     Double i = Math.pow(q,pow);
+     Double H = (bb-aa)/i;
+     Double a_k = aa;
+    Double b_k = aa;
+    Double sum = 0.0;
     for (int j = 0; j<i; j++) {
         a_k = b_k;
         b_k += H;
-//       sum+=f((a_k+b_k)/2.0)*H;
-          sum+=NewtonKotes(a_k,b_k);
+        sum += Gauss(3,1,a_k,b_k);
     }
      SH_i.put(key,sum);
     return sum;
  }
 
 
-  public double RungeMethod(double eps1,double eps2){
-      double i=-1;
-      double R = 0;
-      double q=2;
-      double result = 0;
-      double m = AitkenProcess(eps2);
+  public Double RungeMethod(Double eps1,Double eps2){
+      Double i=-1.0;
+      Double R = 0.0;
+      Double q=2.0;
+      Double result = 0.0;
+      Double m = AitkenProcess(eps2);
       do {
-          double i_1 = i+1;
-          double i_2 = i+2;
-          double SH_1 = S(i_1,q);
-          double SH_2 = S(i_2,q);
-          double Hi_1_m = Math.pow((bb-aa)/Math.pow(q,i_1),m);
-          double Hi_2_m = Math.pow((bb-aa)/Math.pow(q,i_2),m);
-          double Y = (SH_1/Hi_1_m - SH_2/Math.pow((i_2*q),m)) / (1/Hi_1_m - 1/Hi_2_m);
-          double Cm = ( SH_2 - SH_1 ) /  ( Hi_1_m - Hi_2_m );
+          Double i_1 = i+1;
+          Double i_2 = i+2;
+          Double SH_1 = S(i_1,q);
+          Double SH_2 = S(i_2,q);
+          Double Hi_1_m = Math.pow((bb-aa)/Math.pow(q,i_1),m);
+          Double Hi_2_m = Math.pow((bb-aa)/Math.pow(q,i_2),m);
+          Double Y = (SH_1/Hi_1_m - SH_2/Math.pow((i_2*q),m)) / (1/Hi_1_m - 1/Hi_2_m);
+          Double Cm = ( SH_2 - SH_1 ) /  ( Hi_1_m - Hi_2_m );
           R = Cm * Hi_2_m;
           result = SH_2;
           if (Math.abs(R)<eps1) {
@@ -248,29 +248,29 @@ public class Integration {
       return result;
   }
 
-    public double RichardsonMethod(int r,double eps1,double eps2){
-        double q = 2;
-        double m = AitkenProcess(eps2);
-        double Hi[] = new double[r];
+    public Double RichardsonMethod(int r, Double eps1, Double eps2){
+        Double q = 2.0;
+        Double m = AitkenProcess(eps2);
+        Double Hi[] = new Double[r];
         for (int j=0; j<r; j++){
             Hi[j] = (bb-aa)/Math.pow(q,j);
         }
-        double [][] Q = new double[r][r];
-        double[] b = new double[r];
+        Double [][] Q = new Double[r][r];
+        Double[] b = new Double[r];
         for (int i= 0; i<r; i++){
             for (int j=0;j<r; j++){
                 Q[i][j] = (j==0)?1:- Math.pow(Hi[i],m+j);
             }
-            b[i]=S((double)i,q);
+            b[i]=S(new Double(i),q);
         }
-        double[] x = Matrix.eliminateWithGauss(Q,b);
-        double R = 0;
+        Double[] x = Matrix.eliminateWithGauss(Q,b);
+        Double R = 0.0;
         for (int i = 1; i<r; i++){
             R+=x[i]*Math.pow(Hi[r-1],m+i);
         }
         if (Math.abs(R)<eps1){
             System.out.println("Richardson:"+(r-1));
-            return S((double)r-1,q);
+            return S(new Double(r-1),q);
         } else {
             return RichardsonMethod(r+1,eps1,eps2);
         }
@@ -280,7 +280,7 @@ public class Integration {
 
 
 
-    public double RichardsonMethod(double eps1,double eps2){
+    public Double RichardsonMethod(Double eps1,Double eps2){
         return RichardsonMethod(2,eps1,eps2);
     }
 

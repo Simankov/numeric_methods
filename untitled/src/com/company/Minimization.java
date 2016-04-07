@@ -11,11 +11,11 @@ public class Minimization {
     static Integer a = 5;
     static Integer b = 5;
     static Integer c = 13;
-    static double m = 3.62772;
+    static Double m = 3.62772;
     static Double eps = 1.0E-6;
-    static double[][] A = {{4,1,1},{1,2*a,-1},{1,-1,2*b}};
-    static double[] B = {1,-2,3};
-    static double[] minimum = {-4.0/17.0,37.0/187.0,-48.0/187.0};
+    static Double[][] A = {{4.0,1.0,1.0},{1.0,new Double(2*a),-1.0},{1.0,-1.0,new Double(2*b)}};
+    static Double[] B = {1.0,-2.0,3.0};
+    static Double[] minimum = {-4.0/17.0,37.0/187.0,-48.0/187.0};
     static PrintWriter writer;
 
     Minimization(){
@@ -27,11 +27,11 @@ public class Minimization {
     }
     public static void gradientMethod(){
         writer.print("Градиентный метод начался:");
-        double[] xprev = {0,0,0};
-        double[] next = Matrix.add( xprev ,  Matrix.multiply(grad(xprev),u(xprev)) );
-        double [] diff = new double [3];
+        Double[] xprev = {0.0,0.0,0.0};
+        Double[] next = Matrix.add( xprev ,  Matrix.multiply(grad(xprev),u(xprev)) );
+        Double [] diff = new Double [3];
         while (Matrix.euclidNorm(grad(next))/m >= eps){
-            double[] temp = next;
+            Double[] temp = next;
             next = Matrix.add( xprev ,  Matrix.multiply(grad(xprev),u(xprev)) );
             xprev = temp;
             i++;
@@ -51,14 +51,14 @@ public class Minimization {
 
     public static void coordinateMethod() {
         writer.print("Координатный метод начался:");
-        double[] xprev = {0, 0, 0};
-        double[] e1 = {1, 0, 0};
+        Double[] xprev = {0.0, 0.0, 0.0};
+        Double[] e1 = {1.0, 0.0, 0.0};
         int j = 0;
-        double[] diff = new double[3];
-        double[] next = Matrix.add(xprev, Matrix.multiply(e1, u_coord(xprev, ei(0))));
+        Double[] diff = new Double[3];
+        Double[] next = Matrix.add(xprev, Matrix.multiply(e1, u_coord(xprev, ei(0))));
         while (Matrix.euclidNorm(grad(next))/m >= eps) {
             j++;
-            double[] temp = next;
+            Double[] temp = next;
             next = Matrix.add(xprev, Matrix.multiply(ei(j), u_coord(xprev, ei(j))));
             xprev = temp;
             writer.print("Шаг номер:");
@@ -76,45 +76,45 @@ public class Minimization {
 , Matrix.euclidNorm(grad(next)));
     }
 
-    static double[] ei(Integer i){
+    static Double[] ei(Integer i){
         Integer remainder = i%3;
-        if (remainder == 0) return new double[] {1,0,0};
-        if (remainder == 1) return new double[] {0,1,0};
-        if (remainder == 2) return new double[] {0,0,1};
-        return new double[] {1,0,0};
+        if (remainder == 0) return new Double[] {1.0,0.0,0.0};
+        if (remainder == 1) return new Double[] {0.0,1.0,0.0};
+        if (remainder == 2) return new Double[] {0.0,0.0,1.0};
+        return new Double[] {1.0,0.0,0.0};
     }
 
-    static double function(double[] x) {
-        double[] xTA = Matrix.multiply(x, A);
-        double xTAx = Matrix.dot(xTA, x);
-        double xTb = Matrix.dot(x, B);
+    static Double function(Double[] x) {
+        Double[] xTA = Matrix.multiply(x, A);
+        Double xTAx = Matrix.dot(xTA, x);
+        Double xTb = Matrix.dot(x, B);
         return 0.5 * xTAx + xTb + c;
     }
     static void stop(){
         writer.close();
     }
 
-    static double u(double [] x){
-        double[] grad = grad(x);
-        double gradientNorm = Matrix.euclidNorm(grad);
-        double [] gradTA = Matrix.multiply(grad, A);
-        double gradTAgrad = Matrix.dot(gradTA,grad);
-        double uk =  -Math.pow(gradientNorm,2) / (gradTAgrad);
+    static Double u(Double [] x){
+        Double[] grad = grad(x);
+        Double gradientNorm = Matrix.euclidNorm(grad);
+        Double [] gradTA = Matrix.multiply(grad, A);
+        Double gradTAgrad = Matrix.dot(gradTA,grad);
+        Double uk =  -Math.pow(gradientNorm,2) / (gradTAgrad);
         return uk;
     }
 
 
-    static double u_coord(double [] x, double[] ei){
-        double[] grad = grad(x);
-        double eiTgrad = Matrix.dot(ei,grad);
-        double[] eiTA = Matrix.multiply(ei, A);
-        double eiTAei = Matrix.dot(eiTA, ei);
-        double uk =  -eiTgrad/(eiTAei);
+    static Double u_coord(Double [] x, Double[] ei){
+        Double[] grad = grad(x);
+        Double eiTgrad = Matrix.dot(ei,grad);
+        Double[] eiTA = Matrix.multiply(ei, A);
+        Double eiTAei = Matrix.dot(eiTA, ei);
+        Double uk =  -eiTgrad/(eiTAei);
         return uk;
     }
 
-    static double [] grad(double [] x){
-        double [] Ax = Matrix.multiply(A,x);
+    static Double [] grad(Double [] x){
+        Double [] Ax = Matrix.multiply(A,x);
         return  Matrix.add(Ax,B);
     }
 }

@@ -7,18 +7,18 @@ public class Matrix {
 
 
     // return x^T y
-    public static double dot(double[] x, double[] y) {
-        double sum = 0.0;
+    public static Double dot(Double[] x, Double[] y) {
+        Double sum = 0.0;
         for (int i = 0; i < x.length; i++)
             sum += x[i] * y[i];
         return sum;
     }
 
     // return C = A^T
-    public static double[][] transpose(double[][] A) {
+    public static Double[][] transpose(Double[][] A) {
         int m = A.length;
         int n = A[0].length;
-        double[][] C = new double[n][m];
+        Double[][] C = new Double[n][m];
         for (int i = 0; i < m; i++)
             for (int j = 0; j < n; j++)
                 C[j][i] = A[i][j];
@@ -26,10 +26,10 @@ public class Matrix {
     }
 
     // return C = A + B
-    public static double[][] add(double[][] A, double[][] B) {
+    public static Double[][] add(Double[][] A, Double[][] B) {
         int m = A.length;
         int n = A[0].length;
-        double[][] C = new double[m][n];
+        Double[][] C = new Double[m][n];
         for (int i = 0; i < m; i++)
             for (int j = 0; j < n; j++)
                 C[i][j] = A[i][j] + B[i][j];
@@ -37,36 +37,36 @@ public class Matrix {
     }
 
     // return C = A + B
-    public static double[] add(double[] A, double[] B) {
+    public static Double[] add(Double[] A, Double[] B) {
         int n = A.length;
-        double[] C = new double[n];
+        Double[] C = new Double[n];
         for (int i = 0; i < n; i++)
                 C[i] = A[i] + B[i];
         return C;
     }
 
     // return C = A - B
-    public static double[][] subtract(double[][] A, double[][] B) {
+    public static Double[][] subtract(Double[][] A, Double[][] B) {
         int m = A.length;
         int n = A[0].length;
-        double[][] C = new double[m][n];
+        Double[][] C = new Double[m][n];
         for (int i = 0; i < m; i++)
             for (int j = 0; j < n; j++)
                 C[i][j] = A[i][j] - B[i][j];
         return C;
     }
 
-    public static double[] subtract(double[] A, double[] B) {
+    public static Double[] subtract(Double[] A, Double[] B) {
         int n = A.length;
-        double[] C = new double[n];
+        Double[] C = new Double[n];
             for (int i = 0; i < n; i++)
                 C[i] = A[i] - B[i];
         return C;
     }
 
-    public static double euclidNorm(double [] x){
+    public static Double euclidNorm(Double [] x){
         int n = x.length;
-        double result = 0;
+        Double result = 0.0;
         for (int i = 0; i<n; i++){
             result += Math.pow(x[i],2);
         }
@@ -74,12 +74,12 @@ public class Matrix {
     }
 
     // return C = A * B
-    public static double[][] multiply(double[][] A, double[][] B) {
+    public static Double[][] multiply(Double[][] A, Double[][] B) {
         int mA = A.length;
         int nA = A[0].length;
         int mB = B.length;
         int nB = B[0].length;
-        double[][] C = new double[mA][nB];
+        Double[][] C = new Double[mA][nB];
         for (int i = 0; i < mA; i++)
             for (int j = 0; j < nB; j++)
                 for (int k = 0; k < nA; k++)
@@ -88,19 +88,19 @@ public class Matrix {
     }
 
     // matrix-vector multiplication (y = A * x)
-    public static double[] multiply(double[][] A, double[] x) {
+    public static Double[] multiply(Double[][] A, Double[] x) {
         int m = A.length;
         int n = A[0].length;
-        double[] y = new double[m];
+        Double[] y = new Double[m];
         for (int i = 0; i < m; i++)
             for (int j = 0; j < n; j++)
                 y[i] += A[i][j] * x[j];
         return y;
     }
 
-    public static double[] multiply(double[] x, double a) {
+    public static Double[] multiply(Double[] x, Double a) {
         int n = x.length;
-        double[] C = new double[n];
+        Double[] C = new Double[n];
         for (int i = 0; i < n; i++) {
             C[i] = x[i] * a;
         }
@@ -108,10 +108,10 @@ public class Matrix {
     }
 
     // vector-matrix multiplication (y = x^T A)
-    public static double[] multiply(double[] x, double[][] A) {
+    public static Double[] multiply(Double[] x, Double[][] A) {
         int m = A.length;
         int n = A[0].length;
-        double[] y = new double[n];
+        Double[] y = new Double[n];
         for (int j = 0; j < n; j++)
             for (int i = 0; i < m; i++)
                 y[j] += A[i][j] * x[i];
@@ -119,7 +119,7 @@ public class Matrix {
     }
 
     // Gaussian elimination with partial pivoting
-    public static double[] eliminateWithGauss(double[][] A, double[] b) {
+    public static Double[] eliminateWithGauss(Double[][] A, Double[] b) {
         int N = b.length;
 
         for (int p = 0; p < N; p++) {
@@ -131,16 +131,16 @@ public class Matrix {
                     max = i;
                 }
             }
-            double[] temp = A[p];
+            Double[] temp = A[p];
             A[p] = A[max];
             A[max] = temp;
-            double t = b[p];
+            Double t = b[p];
             b[p] = b[max];
             b[max] = t;
 
             // pivot within A and b
             for (int i = p + 1; i < N; i++) {
-                double alpha = A[i][p] / A[p][p];
+                Double alpha = A[i][p] / A[p][p];
                 b[i] -= alpha * b[p];
                 for (int j = p; j < N; j++) {
                     A[i][j] -= alpha * A[p][j];
@@ -149,9 +149,9 @@ public class Matrix {
         }
 
         // back substitution
-        double[] x = new double[N];
+        Double[] x = new Double[N];
         for (int i = N - 1; i >= 0; i--) {
-            double sum = 0.0;
+            Double sum = 0.0;
             for (int j = i + 1; j < N; j++) {
                 sum += A[i][j] * x[j];
             }
