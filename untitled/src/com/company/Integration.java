@@ -4,7 +4,13 @@ package com.company;
 import java.util.HashMap;
 
 public class Integration {
+    enum Type {
+        Kotes,
+        Gauss,
+        Simple,
+    }
     public static Double aa = 1.5;
+    public Type type = Type.Gauss;
     public static Double bb = 2.3;
     public static Double alpha = 1.0/5.0;
     public static Double realValue = 25.0102;
@@ -210,13 +216,20 @@ public class Integration {
      Double i = Math.pow(q,pow);
      Double H = (bb-aa)/i;
      Double a_k = aa;
-    Double b_k = aa;
-    Double sum = 0.0;
-    for (int j = 0; j<i; j++) {
+     Double b_k = aa;
+     Double sum = 0.0;
+     for (int j = 0; j<i; j++) {
         a_k = b_k;
         b_k += H;
-        sum += Gauss(3,1,a_k,b_k);
-    }
+         switch(type) {
+             case Gauss:  sum += Gauss(3, 1, a_k, b_k);
+                 break;
+             case Kotes:  sum += NewtonKotes(a_k,b_k);
+                 break;
+             case Simple: sum += H*f((a_k+b_k)/2);
+                 break;
+         }
+     }
      SH_i.put(key,sum);
     return sum;
  }
