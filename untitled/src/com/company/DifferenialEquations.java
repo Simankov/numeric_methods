@@ -19,8 +19,8 @@ public class DifferenialEquations {
     public double x_k = pi;
     public double s = 2;
     public Double[] y_0() {return new Double[] {this.B*pi, this.A*pi };}; //todo
-    public double epsilon = 0.0000001;
-    public double a_epsilon = 0.00001;
+    public double epsilon = 0.01;
+    public double a_epsilon = epsilon;
 
     public Vector<Point> y1data = new Vector<Point>();
     public Vector<Point> y2data = new Vector<Point>();
@@ -96,10 +96,10 @@ public class DifferenialEquations {
                y1diff = new Vector<Point>();
                y2diff = new Vector<Point>();
                while (x_i < x_k) {
-                   h = getH(x_i,h);
-                   ydiff_est.add(new Point(x_i, Math.abs(getEstimateFail(y_i, x_i, h))));
-                   y_i = y_x_i(x_i, y_i, h);
-                   x_i = x_i + h;
+                   double h_new = getH(x_i,h);
+                   ydiff_est.add(new Point(x_i, Math.abs(getEstimateFail(y_i, x_i, h_new))));
+                   y_i = y_x_i(x_i, y_i, h_new);
+                   x_i = x_i + h_new;
 
                    y1data.add(new Point(x_i, y_i[0]));
                    y2data.add(new Point(x_i, y_i[1]));
@@ -154,7 +154,9 @@ public class DifferenialEquations {
     }
 
     public Double[] automaticRunge(){
-        double h = y_x_i();
+
+//        double h = y_x_i();
+        double h = h();
         Double[] y_i = this.y_0();
         double x_i = x_0;
         while (x_i < this.x_k){
@@ -166,17 +168,19 @@ public class DifferenialEquations {
                 x_i = x_i + h;
             } else if (estimateFail > a_epsilon && estimateFail <= a_epsilon * Math.pow(2,s)){
                 //todo
-                h = getH(x_i,h);
                 y_i = y_x_i(x_i,y_i,h/2);
-                x_i = x_i + h/2; // or h*2
+                y_i = y_x_i(x_i,y_i,h/2);
+                x_i = x_i + getH(x_i,h);
+                h = h/2;
             } else if (estimateFail >= a_epsilon / Math.pow(2,s+1) && estimateFail <= a_epsilon){
                 h = getH(x_i,h);
                 y_i = y_x_i(x_i,y_i,h);
                 x_i = x_i + h;
             } else if (estimateFail < a_epsilon/Math.pow(2,s+1)){
-                h = getH(x_i,h*2.0);
+                h = getH(x_i,h);
                 y_i = y_x_i(x_i,y_i,h);
                 x_i = x_i + h;
+                h = h*2;
             }
         }
 
@@ -185,9 +189,9 @@ public class DifferenialEquations {
     }
 
     public Double getEstimateFail(Double[] y_i, Double x_i, Double h){
-        Double[] y_h_2 = y_x_i(x_i,y_i,h/2.0);
+        Double[] y_h_2 = y_x_i(x_i,y_i,h/2.0); //todo
         Double[] y_h = y_x_i(x_i,y_i,h);
-        Double est_fail = norm( Matrix.subtract(y_h,y_h_2))/(1.0-Math.pow(2,-this.s));
+        Double est_fail = norm( Matrix.subtract(y_h_2,y_h))/(1.0-Math.pow(2.0,-this.s));//todo
         return est_fail;
     }
 

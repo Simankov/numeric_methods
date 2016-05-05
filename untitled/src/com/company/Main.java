@@ -3,9 +3,6 @@ package com.company;
 
 public class Main {
     public static void main(String[] args) {
-        double epsilon = 0.001;
-        double epsilonForM = 0.01;
-
         DifferenialEquations differenialEquations = new DifferenialEquations();
         System.out.println("finded" + differenialEquations.y_x_i());
         differenialEquations.automaticRunge();
